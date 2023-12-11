@@ -445,17 +445,17 @@ static int Day11_1()
                 .Concat(GetPermutations(elements.Skip(1))) :
             Enumerable.Empty<(T, T)>();
 
-    static IEnumerable<(int x, int y, char c)> Expand(IEnumerable<(int x, int y, char c)> universe) =>
+    static IEnumerable<(int x, int y)> Expand(IEnumerable<(int x, int y, char c)> universe) =>
         universe
             .GroupBy(val => val.y)
             .OrderBy(group => group.Key)
-            .SelectMany((group, i) => group.Select(galaxy => (x: galaxy.x, y: galaxy.y + (group.Key - i), c: '#')))
+            .SelectMany((group, i) => group.Select(galaxy => (x: galaxy.x, y: galaxy.y + (group.Key - i))))
             .GroupBy(val => val.x)
             .OrderBy(group => group.Key)
-            .SelectMany((group, i) => group.Select(galaxy => (x: galaxy.x + (group.Key - i), y: galaxy.y, c: '#')))
+            .SelectMany((group, i) => group.Select(galaxy => (x: galaxy.x + (group.Key - i), y: galaxy.y)))
             .ToImmutableArray();
 
-    static int CalculateDistance((int x, int y, char c) first, (int x, int y, char c) second) =>
+    static int CalculateDistance((int x, int y) first, (int x, int y) second) =>
         Math.Abs(first.x - second.x) + Math.Abs(first.y - second.y);
 }
 
@@ -479,16 +479,16 @@ static long Day11_2()
                 .Concat(GetPermutations(elements.Skip(1))) :
             Enumerable.Empty<(T, T)>();
 
-    static IEnumerable<(long x, long y, char c)> Expand(IEnumerable<(int x, int y, char c)> universe) =>
+    static IEnumerable<(long x, long y)> Expand(IEnumerable<(int x, int y, char c)> universe) =>
         universe
             .GroupBy(val => val.y)
             .OrderBy(group => group.Key)
-            .SelectMany((group, i) => group.Select(galaxy => (x: (long)galaxy.x, y: (long)galaxy.y + (group.Key - i) * (ExpansionSize - 1), c: '#')))
+            .SelectMany((group, i) => group.Select(galaxy => (x: (long)galaxy.x, y: (long)galaxy.y + (group.Key - i) * (ExpansionSize - 1))))
             .GroupBy(val => val.x)
             .OrderBy(group => group.Key)
-            .SelectMany((group, i) => group.Select(galaxy => (x: galaxy.x + (group.Key - i) * (ExpansionSize - 1), y: galaxy.y, c: '#')))
+            .SelectMany((group, i) => group.Select(galaxy => (x: galaxy.x + (group.Key - i) * (ExpansionSize - 1), y: galaxy.y)))
             .ToImmutableArray();
 
-    static long CalculateDistance((long x, long y, char c) first, (long x, long y, char c) second) =>
+    static long CalculateDistance((long x, long y) first, (long x, long y) second) =>
         Math.Abs(first.x - second.x) + Math.Abs(first.y - second.y);
 }
