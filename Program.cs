@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 #pragma warning disable CS8321
 
 var sw = Stopwatch.StartNew();
-var result = Day10_2();
+var result = Day11_1();
 sw.Stop();
 
 Console.WriteLine(result);
@@ -425,4 +425,36 @@ static int Day10_1()
 static int Day10_2()
 {
     throw new NotImplementedException();
+}
+
+static int Day11_1()
+{
+    var universe = File.ReadAllLines("data/Day11.txt")
+        .SelectMany((line, y) => line.Select((c, x) => (x: x, y: y, c: c)))
+        .Where(space => space.c == '#');
+
+    return GetPermutations(Expand(universe))
+        .Select(galaxyPair => CalculateDistance(galaxyPair.first, galaxyPair.second))
+        .Sum();
+
+    static IEnumerable<(T first, T second)> GetPermutations<T>(IEnumerable<T> elements) =>
+        elements.Any() ?
+            elements
+                .Skip(1)
+                .Select(element => (elements.First(), element))
+                .Concat(GetPermutations(elements.Skip(1))) :
+            Enumerable.Empty<(T, T)>();
+
+    static IEnumerable<(int x, int y, char c)> Expand(IEnumerable<(int x, int y, char c)> universe) =>
+        universe
+            .GroupBy(val => val.y)
+            .OrderBy(group => group.Key)
+            .SelectMany((group, i) => group.Select(galaxy => (x: galaxy.x, y: galaxy.y + (group.Key - i), c: '#')))
+            .GroupBy(val => val.x)
+            .OrderBy(group => group.Key)
+            .SelectMany((group, i) => group.Select(galaxy => (x: galaxy.x + (group.Key - i), y: galaxy.y, c: '#')))
+            .ToImmutableArray();
+
+    static int CalculateDistance((int x, int y, char c) first, (int x, int y, char c) second) =>
+        Math.Abs(first.x - second.x) + Math.Abs(first.y - second.y);
 }
